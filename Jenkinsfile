@@ -13,7 +13,7 @@ pipeline {
 
         stage("Checkout from SCM") {
                steps {
-                   git branch: 'main', credentialsId: 'github', url: 'https://github.com/Ashfaque-9x/gitops-register-app'
+                   git branch: 'main', credentialsId: 'github', url: 'https://github.com/deepamchavhan/gitops-register-app'
                }
         }
 
@@ -30,24 +30,18 @@ pipeline {
         stage("Push the changed deployment file to Git") {
             steps {
                 sh """
-                   git config --global user.name "Ashfaque-9x"
-                   git config --global user.email "ashfaque.s510@gmail.com"
+                   git config --global user.name "deepamchavhan"
+                   git config --global user.email "deepamchavhan777@gmail.com"
                    git add deployment.yaml
                    git commit -m "Updated Deployment Manifest"
                 """
                 withCredentials([gitUsernamePassword(credentialsId: 'github', gitToolName: 'Default')]) {
-                  sh "git push https://github.com/Ashfaque-9x/gitops-register-app main"
+                  sh "git push https://github.com/deepamchavhan/gitops-register-app main"
                 }
             }
         }
 
-         stage("Trigger CD Pipeline") {
-            steps {
-                script {
-                    sh "curl -v -k --user clouduser:${JENKINS_API_TOKEN} -X POST -H 'cache-control: no-cache' -H 'content-type: application/x-www-form-urlencoded' --data 'IMAGE_TAG=${IMAGE_TAG}' 'ec2-3-110-101-192.ap-south-1.compute.amazonaws.com:8080/job/gitops-register-app-cd/buildWithParameters?token=gitops-token'"
-                }
-            }
-       }
+      
     }
     }
 }
